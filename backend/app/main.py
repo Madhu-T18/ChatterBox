@@ -9,6 +9,8 @@ from app.auth.auth import router as auth_router
 from app.admin.admin_routes import router as admin_router
 from app.chat.websocket import router as chat_router
 from app.chat.messages import router as messages_router
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 
 
@@ -40,12 +42,16 @@ app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(chat_router)
 app.include_router(messages_router, prefix="/chat")
+app.mount("/static", StaticFiles(directory="../frontend"), name="static")
 
 
 
 # ===============================
 # ROOT
 # ===============================
+@app.get("/")
+def serve_home():
+    return FileResponse("../frontend/index.html")
 @app.get("/")
 def root():
     return {"status": "Backend running successfully 🚀"}
